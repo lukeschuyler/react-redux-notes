@@ -1,0 +1,52 @@
+body {
+  margin: 0 50px;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+.Header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.Header a {
+  margin: 0 10px;
+}
+
+#welcome {
+  text-align: center;
+}
+
+.user-list-item {
+  display: flex;
+  justify-content: space-between;
+  /*align-items: center;*/
+  width: 700px;
+  margin: 10px 0;
+}
+
+.email-item {
+  list-style: none;
+  width: 200px;
+  display: flex;
+  align-items: flex-start;
+}
+
+.hide {
+  display: none;
+}
+
+#note-nav {
+  display: flex;
+  justify-content: space-around;
+  margin: 10px 0 30px 0;
+  width: 700px;
+}
+
+.space-holder {
+  width: 50px;
+}
+
+.highlighted-button {
+  background: lightblue;
+}
