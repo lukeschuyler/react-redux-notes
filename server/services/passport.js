@@ -12,6 +12,8 @@ const jwtOptions = {
 
 const localOptions = { usernameField: 'email'};
 const localLogin = new LocalStratgey(localOptions, (email, password, done) => {
+  console.log(email)
+  console.log(done)
   User.findOne({ email }, (err, user) => {
     if (err) { return done(err, false); }
     if (!user) { return done(null, false); }

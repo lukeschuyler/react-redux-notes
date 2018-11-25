@@ -21,9 +21,9 @@ userSchema.pre('save', function(next) { // NEEDS ES5 FUNCTION SYNTAX FOR REFEREN
   });
 });
 
-userSchema.methods.comparePassword = function (candidatePassword, callback) { // NEEDS ES5 FUNCTION SYNTAX FOR REFERENCE TO THIS!!!!
-  if (err) { return callback(err); }
-  bcrypt.compare(candidatePassword, this.password, (err, isMatch) => { 
+userSchema.methods.comparePassword = function (candidatePassword, callback) {
+  bcrypt.compare(candidatePassword, this.password, (err, isMatch) => { // NEEDS ES5 FUNCTION SYNTAX FOR REFERENCE TO THIS!!!!
+    if (err) { return callback(err); }
     callback(null, isMatch);
   });
 }
