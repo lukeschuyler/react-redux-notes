@@ -59,6 +59,37 @@ exports.signin = (req, res, next) => {
 }
 
 exports.signupMobile = async (req, res, next) => {
+  const { email, password, firstName, lastName } = req.body;
+  
+  if (!(email && password && firstName && lastName )) {
+    return res.status(422).json({ error: 'You must provide an email and password.' });
+  }
+  
+  try {
+    const user = await User.findOne({ email });
+    console.log('USER', user);
+    if (user) {
+      return res.status(422).send({
+        error: 2,
+        msg: 'Email is in use.'
+      });
+    }
+    const newUser = new User({ email, password, firstName, lastName });
+    await newUser.save();
+    
+    const token = await crypto.randomBytes(16).toString('hex');
+    await UserToken.create({ token, _user_id: newUser._id });
+
+    return res.json({ token, userId: newUser._id });
+  } catch (e) {
+    return res.status(401).send({
+      error: 2,
+      msg: 'Something went wrong.'
+    });
+  }
+}
+
+exports.signupMobile = async (req, res, next) => {
   const { email, password } = req.body;
   
   if (!(email && password)) {
@@ -87,7 +118,6 @@ exports.signupMobile = async (req, res, next) => {
       msg: 'Something went wrong.'
     });
   }
-
 }
 
 exports.signinMobile = async (req, res, next) => {
