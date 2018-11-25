@@ -68,16 +68,24 @@ exports.signupMobile = async (req, res, next) => {
   try {
     const user = await User.findOne({ email });
     console.log('USER', user);
-    return res.status(422).send({ error: 'Email is in use.' });
-  } catch (e) {
-    console.log(e);
-    const user = new User({ email, password });
-    await user.save();
+    if (user) {
+      return res.status(422).send({
+        error: 2,
+        msg: 'Email is in use.'
+      });
+    }
+    const newUser = new User({ email, password });
+    await newUser.save();
     
     const token = await crypto.randomBytes(16).toString('hex');
-    await UserToken.create({ token, _user_id: user._id });
+    await UserToken.create({ token, _user_id: newUser._id });
 
-    return res.json({ token, userId: user._id,  });
+    return res.json({ token, userId: newUser._id });
+  } catch (e) {
+    return res.status(401).send({
+      error: 2,
+      msg: 'Something went wrong.'
+    });
   }
 
 }
@@ -95,6 +103,7 @@ exports.signinMobile = async (req, res, next) => {
     });
   }
   
+  // TODO: avoid callback 
   userRecord.comparePassword(password, (err, match) => {
     if (err) { return next(err); }
 
@@ -106,6 +115,24 @@ exports.signinMobile = async (req, res, next) => {
         msg: 'Incorrect password.'
       });
     }
+  });
+}
+
+exports.logoutMobile = async (req, res, next) => {
+  const token = req.param('token');
+
+  try {
+    await UserToken.deleteOne({ token });
+  } catch (e) {
+    console.log(e);
+    return res.json({
+      error: 2,
+      msg: 'Something went wrong.'
+    });
+  }
+  
+  return res.json({
+    success: true,
   });
 }
 

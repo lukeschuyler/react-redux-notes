@@ -31,6 +31,7 @@ module.exports = function (app) {
   // user/auth MOBILE
   app.post('/mobile/signup', Authentication.signupMobile);  
   app.post('/mobile/signin', Authentication.signinMobile);
+  app.post('/mobile/logout', Authentication.logoutMobile);
 
   // notes
   app.get('/notes/:userId', getNotes);
