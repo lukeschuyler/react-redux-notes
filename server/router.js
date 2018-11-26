@@ -32,6 +32,7 @@ module.exports = function (app) {
   app.post('/mobile/signup', Authentication.signupMobile);  
   app.post('/mobile/signin', Authentication.signinMobile);
   app.post('/mobile/logout', Authentication.logoutMobile);
+  app.get('/mobile/check-token', Authentication.checkToken);
 
   // notes
   app.get('/notes/:userId', getNotes);

@@ -1,12 +1,24 @@
 const Note = require('../models/note');
 const User = require('../models/user');
+const UserToken = require('../models/userToken');
 
-exports.addNote = (req, res, next) => {
-  const { _user_id, content } = req.body;
+exports.addNote = async (req, res, next) => {
+  const { content } = req.body;
+
+  let _user_id;
+  if (req.param('token')) {
+    let token = await UserToken.findOne({ token: req.param('token') });
+    _user_id = token._user_id;
+  } else {
+    _user_id = req.body._user_id;
+  }
+  
   const note = new Note({ _user_id, content })
   note.save(err => {
     if (err) { return next(err); }
-    return res.json({ note });
+    let ts = new Date(note.timestamp);
+    let newNote = { ...note._doc, timestamp: ts.toDateString() }
+    return res.json({ note: newNote });
   }); 
 }
 
@@ -39,10 +51,11 @@ exports.getNotes = (req, res, next) => {
 }
 
 exports.getAllNotes = (req, res, next) => {
-  Note.find((err, notes) => {
+  Note.find().sort({timestamp: 'desc'}).exec((err, notes) => {
     if (err) { return next(err); }
     User.find((err, users) => {
       let newNotes = assignUserEmails(notes, users);
+      console.log(newNotes)
       return res.json({ notes: newNotes });
     });
   }); 
@@ -56,6 +69,9 @@ const assignUserEmails = (notes, users) =>
         email = u.email;
       }
     });
-    n.email = email;
-    return n;
+
+    let timestamp = new Date(n.timestamp);
+    timestamp = timestamp.toDateString();
+
+    return { ...n._doc, timestamp, email };
   });
